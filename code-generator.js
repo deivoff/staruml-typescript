@@ -85,21 +85,21 @@ class JavaCodeGenerator {
     } else if (elem instanceof type.UMLClass) {
       // AnnotationType
       if (elem.stereotype === 'annotationType') {
-        fullPath = path.join(basePath, elem.name + '.java')
+        fullPath = path.join(basePath, elem.name + '.ts')
         codeWriter = new codegen.CodeWriter(this.getIndentString(options))
         this.writePackageDeclaration(codeWriter, elem, options)
         codeWriter.writeLine()
-        codeWriter.writeLine('import java.util.*;')
+        // codeWriter.writeLine('import java.util.*;')
         codeWriter.writeLine()
         this.writeAnnotationType(codeWriter, elem, options)
         fs.writeFileSync(fullPath, codeWriter.getData())
       // Class
       } else {
-        fullPath = basePath + '/' + elem.name + '.java'
+        fullPath = basePath + '/' + elem.name + '.ts'
         codeWriter = new codegen.CodeWriter(this.getIndentString(options))
         this.writePackageDeclaration(codeWriter, elem, options)
         codeWriter.writeLine()
-        codeWriter.writeLine('import java.util.*;')
+        // codeWriter.writeLine('import java.util.*;')
         codeWriter.writeLine()
         this.writeClass(codeWriter, elem, options)
         fs.writeFileSync(fullPath, codeWriter.getData())
@@ -107,18 +107,18 @@ class JavaCodeGenerator {
 
     // Interface
     } else if (elem instanceof type.UMLInterface) {
-      fullPath = basePath + '/' + elem.name + '.java'
+      fullPath = basePath + '/' + elem.name + '.ts'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       this.writePackageDeclaration(codeWriter, elem, options)
       codeWriter.writeLine()
-      codeWriter.writeLine('import java.util.*;')
+      // codeWriter.writeLine('import java.util.*;')
       codeWriter.writeLine()
       this.writeInterface(codeWriter, elem, options)
       fs.writeFileSync(fullPath, codeWriter.getData())
 
     // Enum
     } else if (elem instanceof type.UMLEnumeration) {
-      fullPath = basePath + '/' + elem.name + '.java'
+      fullPath = basePath + '/' + elem.name + '.ts'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       this.writePackageDeclaration(codeWriter, elem, options)
       codeWriter.writeLine()
@@ -152,9 +152,9 @@ class JavaCodeGenerator {
   getModifiers (elem) {
     var modifiers = []
     var visibility = this.getVisibility(elem)
-    if (visibility) {
-      modifiers.push(visibility)
-    }
+    // if (visibility) {
+    //   modifiers.push(visibility)
+    // }
     if (elem.isStatic === true) {
       modifiers.push('static')
     }
@@ -240,7 +240,7 @@ class JavaCodeGenerator {
    */
   writeDoc (codeWriter, text, options) {
     var i, len, lines
-    if (options.javaDoc && (typeof text === 'string')) {
+    if (options.tsDoc && (typeof text === 'string')) {
       lines = text.trim().split('\n')
       codeWriter.writeLine('/**')
       for (i = 0, len = lines.length; i < len; i++) {
@@ -277,14 +277,15 @@ class JavaCodeGenerator {
       var terms = []
       // Doc
       this.writeDoc(codeWriter, 'Default constructor', options)
-      // Visibility
-      var visibility = this.getVisibility(elem)
-      if (visibility) {
-        terms.push(visibility)
-      }
-      terms.push(elem.name + '()')
-      codeWriter.writeLine(terms.join(' ') + ' {')
-      codeWriter.writeLine('}')
+      // // Visibility
+      // var visibility = this.getVisibility(elem)
+      // if (visibility) {
+      //   terms.push(visibility)
+      // }
+      terms.push("constructor() {}");
+      // terms.push(elem.name + '()')
+      // codeWriter.writeLine(terms.join(' ') + ' {')
+      codeWriter.writeLine(terms.join(' ') );
     }
   }
 
@@ -294,20 +295,25 @@ class JavaCodeGenerator {
    * @param {type.Model} elem
    * @param {Object} options
    */
-  writeMemberVariable (codeWriter, elem, options) {
+  writeMemberVariable (codeWriter, elem, options,type) {
     if (elem.name.length > 0) {
       var terms = []
       // doc
       this.writeDoc(codeWriter, elem.documentation, options)
       // modifiers
-      var _modifiers = this.getModifiers(elem)
-      if (_modifiers.length > 0) {
-        terms.push(_modifiers.join(' '))
+      if(type!="interface"){
+        var _modifiers = this.getModifiers(elem)
+        if (_modifiers.length > 0) {
+          terms.push(_modifiers.join(' '))
+        }
       }
-      // type
-      terms.push(this.getType(elem))
       // name
       terms.push(elem.name)
+
+      terms.push(":");
+      // type
+      terms.push(this.getType(elem))
+
       // initial value
       if (elem.defaultValue && elem.defaultValue.length > 0) {
         terms.push('= ' + elem.defaultValue)
@@ -324,7 +330,7 @@ class JavaCodeGenerator {
    * @param {boolean} skipBody
    * @param {boolean} skipParams
    */
-  writeMethod (codeWriter, elem, options, skipBody, skipParams) {
+  writeMethod (codeWriter, elem, options, skipBody, skipParams,type) {
     if (elem.name.length > 0) {
       var terms = []
       var params = elem.getNonReturnParameters()
@@ -350,35 +356,32 @@ class JavaCodeGenerator {
         doc += '\n@return ' + returnParam.documentation
       }
       this.writeDoc(codeWriter, doc, options)
-
-      // modifiers
       var _modifiers = this.getModifiers(elem)
-      if (_modifiers.length > 0) {
-        terms.push(_modifiers.join(' '))
+      if(type =='interface'){
+        // modifiers
+        if (_modifiers.length > 0) {
+          terms.push(_modifiers.join(' '))
+        }
       }
-
-      // type
-      if (returnParam) {
-        terms.push(this.getType(returnParam))
-      } else {
-        terms.push('void')
-      }
-
       // name + parameters
       var paramTerms = []
       if (!skipParams) {
         var len
         for (i = 0, len = params.length; i < len; i++) {
           var p = params[i]
-          var s = this.getType(p) + ' ' + p.name
+          var s = p.name+ ':' + this.getType(p) 
           if (p.isReadOnly === true) {
-            s = 'final ' + s
+            s = 'const ' + s
           }
           paramTerms.push(s)
         }
       }
       terms.push(elem.name + '(' + paramTerms.join(', ') + ')')
-
+      if(returnParam){
+        var returnType = this.getType(returnParam)
+        terms.push(":");
+        terms.push(returnType);
+      }
       // body
       if (skipBody === true || _modifiers.includes('abstract')) {
         codeWriter.writeLine(terms.join(' ') + ';')
@@ -386,27 +389,19 @@ class JavaCodeGenerator {
         codeWriter.writeLine(terms.join(' ') + ' {')
         codeWriter.indent()
         codeWriter.writeLine('// TODO implement here')
-
         // return statement
         if (returnParam) {
           var returnType = this.getType(returnParam)
           if (returnType === 'boolean') {
             codeWriter.writeLine('return false;')
-          } else if (returnType === 'int' || returnType === 'long' || returnType === 'short' || returnType === 'byte') {
+          } else if (returnType === 'number' ) {
             codeWriter.writeLine('return 0;')
-          } else if (returnType === 'float') {
-            codeWriter.writeLine('return 0.0f;')
-          } else if (returnType === 'double') {
-            codeWriter.writeLine('return 0.0d;')
-          } else if (returnType === 'char') {
-            codeWriter.writeLine('return "0";')
-          } else if (returnType === 'String') {
+          }  else if (returnType === 'string') {
             codeWriter.writeLine('return "";')
           } else {
             codeWriter.writeLine('return null;')
           }
         }
-
         codeWriter.outdent()
         codeWriter.writeLine('}')
       }
@@ -530,6 +525,7 @@ class JavaCodeGenerator {
 
     codeWriter.outdent()
     codeWriter.writeLine('}')
+    codeWriter.writeLine("export = "+ elem.name+";");
   }
 
   /**
@@ -548,7 +544,8 @@ class JavaCodeGenerator {
     // Modifiers
     var visibility = this.getVisibility(elem)
     if (visibility) {
-      terms.push(visibility)
+      //ts no visibility
+      // terms.push(visibility)
     }
 
     // Interface
@@ -567,7 +564,7 @@ class JavaCodeGenerator {
     // Member Variables
     // (from attributes)
     for (i = 0, len = elem.attributes.length; i < len; i++) {
-      this.writeMemberVariable(codeWriter, elem.attributes[i], options)
+      this.writeMemberVariable(codeWriter, elem.attributes[i], options,"interface");
       codeWriter.writeLine()
     }
     // (from associations)
@@ -577,18 +574,18 @@ class JavaCodeGenerator {
     for (i = 0, len = associations.length; i < len; i++) {
       var asso = associations[i]
       if (asso.end1.reference === elem && asso.end2.navigable === true) {
-        this.writeMemberVariable(codeWriter, asso.end2, options)
+        this.writeMemberVariable(codeWriter, asso.end2, options,"interface")
         codeWriter.writeLine()
       }
       if (asso.end2.reference === elem && asso.end1.navigable === true) {
-        this.writeMemberVariable(codeWriter, asso.end1, options)
+        this.writeMemberVariable(codeWriter, asso.end1, options,"interface")
         codeWriter.writeLine()
       }
     }
 
     // Methods
     for (i = 0, len = elem.operations.length; i < len; i++) {
-      this.writeMethod(codeWriter, elem.operations[i], options, true, false)
+      this.writeMethod(codeWriter, elem.operations[i], options, true, false,"interface")
       codeWriter.writeLine()
     }
 
@@ -610,9 +607,9 @@ class JavaCodeGenerator {
         codeWriter.writeLine()
       }
     }
-
     codeWriter.outdent()
     codeWriter.writeLine('}')
+    codeWriter.writeLine("export default "+elem.name);
   }
 
   /**

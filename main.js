@@ -26,24 +26,24 @@ const codeAnalyzer = require('./code-analyzer')
 
 function getGenOptions () {
   return {
-    javaDoc: app.preferences.get('java.gen.javaDoc'),
-    useTab: app.preferences.get('java.gen.useTab'),
-    indentSpaces: app.preferences.get('java.gen.indentSpaces')
+    tsDoc: app.preferences.get('ts.gen.tsDoc'),
+    useTab: app.preferences.get('ts.gen.useTab'),
+    indentSpaces: app.preferences.get('ts.gen.indentSpaces')
   }
 }
 
 function getRevOptions () {
   return {
-    association: app.preferences.get('java.rev.association'),
-    publicOnly: app.preferences.get('java.rev.publicOnly'),
-    typeHierarchy: app.preferences.get('java.rev.typeHierarchy'),
-    packageOverview: app.preferences.get('java.rev.packageOverview'),
-    packageStructure: app.preferences.get('java.rev.packageStructure')
+    association: app.preferences.get('ts.rev.association'),
+    publicOnly: app.preferences.get('ts.rev.publicOnly'),
+    typeHierarchy: app.preferences.get('ts.rev.typeHierarchy'),
+    packageOverview: app.preferences.get('ts.rev.packageOverview'),
+    packageStructure: app.preferences.get('ts.rev.packageStructure')
   }
 }
 
 /**
- * Command Handler for Java Generate
+ * Command Handler for ts Generate
  *
  * @param {Element} base
  * @param {string} path
@@ -84,7 +84,7 @@ function _handleGenerate (base, path, options) {
 }
 
 /**
- * Command Handler for Java Reverse
+ * Command Handler for ts Reverse
  *
  * @param {string} basePath
  * @param {Object} options
@@ -103,16 +103,16 @@ function _handleReverse (basePath, options) {
 }
 
 /**
- * Popup PreferenceDialog with Java Preference Schema
+ * Popup PreferenceDialog with ts Preference Schema
  */
 function _handleConfigure () {
-  app.commands.execute('application:preferences', 'java')
+  app.commands.execute('application:preferences', 'ts')
 }
 
 function init () {
-  app.commands.register('java:generate', _handleGenerate)
-  app.commands.register('java:reverse', _handleReverse)
-  app.commands.register('java:configure', _handleConfigure)
+  app.commands.register('ts:generate', _handleGenerate)
+  app.commands.register('ts:reverse', _handleReverse)
+  app.commands.register('ts:configure', _handleConfigure)
 }
 
 exports.init = init

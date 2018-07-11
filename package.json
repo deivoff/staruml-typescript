@@ -1,18 +1,28 @@
 {
-  "name": "staruml.java",
-  "title": "Java",
-  "description": "Java code generation and reverse engineering.",
-  "homepage": "https://github.com/staruml/staruml-java",
-  "issues": "https://github.com/staruml/staruml-java/issues",
-  "keywords": ["java"],
-  "version": "0.9.4",
+  "name": "staruml.ts",
+  "title": "TypeScript",
+  "description": "TypeScript code generation and reverse engineering.",
+  "homepage": "https://github.com/happybang/staruml-ts",
+  "issues": "https://github.com/happybang/staruml-ts/issues",
+  "keywords": [
+    "TypeScript"
+  ],
+  "version": "1.0.0",
   "author": {
-    "name": "Minkyu Lee",
-    "email": "niklaus.lee@gmail.com",
-    "url": "https://github.com/niklauslee"
+    "name": "fengwan",
+    "email": "hnnyejc@gmail.com",
+    "url": "https://github.com/happybang"
   },
   "license": "MIT",
   "engines": {
     "staruml": "^3.0.0"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "^2.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
