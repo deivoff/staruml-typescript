@@ -1,4 +1,4 @@
-#  important ! it's a fork of Java Extension for StraUML 
+#  important ! it's a fork of Java Extension for StraUML (https://github.com/staruml/staruml-java)
 
 TypeScript Extension for StarUML
 ==========================
