@@ -152,9 +152,9 @@ class JavaCodeGenerator {
   getModifiers (elem) {
     var modifiers = []
     var visibility = this.getVisibility(elem)
-    // if (visibility) {
-    //   modifiers.push(visibility)
-    // }
+    if (visibility) {
+       modifiers.push(visibility)
+    }
     if (elem.isStatic === true) {
       modifiers.push('static')
     }
