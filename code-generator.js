@@ -277,14 +277,14 @@ class JavaCodeGenerator {
       var terms = []
       // Doc
       this.writeDoc(codeWriter, 'Default constructor', options)
-      // Visibility
-      var visibility = this.getVisibility(elem)
-      if (visibility) {
-        terms.push(visibility)
-      }
+      // // Visibility
+      // var visibility = this.getVisibility(elem)
+      // if (visibility) {
+      //   terms.push(visibility)
+      // }
       terms.push("constructor() {}");
-      terms.push(elem.name + '()')
-      codeWriter.writeLine(terms.join(' ') + ' {')
+      // terms.push(elem.name + '()')
+      // codeWriter.writeLine(terms.join(' ') + ' {')
       codeWriter.writeLine(terms.join(' ') );
     }
   }
